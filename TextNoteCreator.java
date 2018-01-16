@@ -69,7 +69,7 @@ public class TextNoteCreator extends NoteCreator {
     }
     public NoteFrame createTextNoteFrame()
     {
-        return new TextNoteFrame(org, titleField.getText(),textArea.getText(),colorCombo.getSelectedIndex(), this.getDesktopPane(), this.getLocation().x,this.getLocation().y);
+        return new TextNoteFrame(org, titleField.getText(),textArea.getText(),colorCombo.getSelectedIndex(), this.getDesktopPane(), this.getLocation().x,this.getLocation().y,300,300);
     }
 
     

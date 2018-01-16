@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
 /**
  * 
  * @author baru
@@ -101,6 +102,14 @@ public class Organizator extends JFrame implements ActionListener {
         menuItem.addActionListener(this);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Clear Board");
+        menuItem.setMnemonic(KeyEvent.VK_E);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_E, ActionEvent.ALT_MASK));
+        menuItem.setActionCommand("clear");
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+        
         menuItem = new JMenuItem("Quit");
         menuItem.setMnemonic(KeyEvent.VK_Q);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -112,35 +121,41 @@ public class Organizator extends JFrame implements ActionListener {
         return menuBar;
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if ("newimage".equals(e.getActionCommand()))
-        {
-            createImageFrame();
-        }
-        else if ("newnote".equals(e.getActionCommand()))
-        {
-            createNoteFrame();
-        }
-        else if ("save".equals(e.getActionCommand()))
-        {
-            final JFileChooser fc = new JFileChooser();
-            int returnVal = fc.showSaveDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION)
-            {
-                saveBoard(fc.getSelectedFile().getPath());
-            }
-        }
-        else if ("load".equals(e.getActionCommand()))
-        {
-            final JFileChooser fc = new JFileChooser();
-            int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION)
-            {
-                loadBoard(fc.getSelectedFile().getPath());
-            }
-        }
-        else { //quit
-            quit();
+        switch (e.getActionCommand()) {
+            case "newimage":
+                createImageFrame();
+                break;
+            case "newnote":
+                createNoteFrame();
+                break;
+            case "save":
+                {
+                    final JFileChooser fc = new JFileChooser();
+                    int returnVal = fc.showSaveDialog(this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION)
+                    {
+                        saveBoard(fc.getSelectedFile().getPath());
+                    }       break;
+                }
+            case "load":
+                {
+                    final JFileChooser fc = new JFileChooser();
+                    int returnVal = fc.showOpenDialog(this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION)
+                    {
+                        this.closeAllNotes();
+                        loadBoard(fc.getSelectedFile().getPath());
+                    }       break;
+                }
+            case "clear":
+                this.closeAllNotes();
+                break;
+            default:
+                //quit
+                quit();
+                break;
         }
     }
 
@@ -160,8 +175,8 @@ public class Organizator extends JFrame implements ActionListener {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    protected void loadImageNoteFrame(String title, String text, int bgcolor, int x, int y) {
-        NoteFrame frame = new TextNoteFrame(this, title, text, bgcolor, desktop, x, y);
+    protected void loadImageNoteFrame(String title, String text, int bgcolor, int x, int y,int sizeX,int sizeY) {
+        NoteFrame frame = new TextNoteFrame(this, title, text, bgcolor, desktop, x, y, sizeX, sizeY);
         this.addNote(frame, frame.getId());
         frame.setVisible(true); //necessary as of 1.3
         desktop.add(frame);
@@ -169,8 +184,8 @@ public class Organizator extends JFrame implements ActionListener {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    protected void loadTextNoteFrame(String title, String path, int bgcolor, int x, int y) {
-        NoteFrame frame = new ImageNoteFrame(this, title, path, bgcolor, desktop, x, y);
+    protected void loadTextNoteFrame(String title, String path, int bgcolor, int x, int y, int sizeX, int sizeY) {
+        NoteFrame frame = new ImageNoteFrame(this, title, path, bgcolor, desktop, x, y, sizeX, sizeY);
         this.addNote(frame, frame.getId());
         frame.setVisible(true); //necessary as of 1.3
         desktop.add(frame);
@@ -229,16 +244,16 @@ public class Organizator extends JFrame implements ActionListener {
             {
                     bw.write(Integer.toString(frame.getType())+"\n"
                             +frame.getTitle()+"\n"
-                            +frame.getText()+"\n"
+                            +frame.getText().replace("\n", "")+"\n"
                             +Integer.toString(frame.getBgColor())+"\n"
                             +Integer.toString(frame.getLocation().x)+"\n"
-                            +Integer.toString(frame.getLocation().y)+"\n");
+                            +Integer.toString(frame.getLocation().y)+"\n"
+                            +Integer.toString(frame.getSize().width)+"\n"
+                            +Integer.toString(frame.getSize().height)+"\n");
             }
 
 	} catch (IOException e) {
-
-            e.printStackTrace();
-
+            System.out.println("Can't write file.");
 	} finally {
 
             try {
@@ -250,9 +265,7 @@ public class Organizator extends JFrame implements ActionListener {
                     fw.close();
 
             } catch (IOException ex) {
-
-		ex.printStackTrace();
-
+                System.out.println("Can't close file.");
             }
 
 	}
@@ -273,13 +286,13 @@ public class Organizator extends JFrame implements ActionListener {
             while ((firstLine = br.readLine()) != null) 
             {
                 if(Integer.parseInt(firstLine) == 0)
-                    loadTextNoteFrame(br.readLine(), br.readLine(), Integer.parseInt(br.readLine()), Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()));
+                    loadTextNoteFrame(br.readLine(), br.readLine(), Integer.parseInt(br.readLine()), Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()));
                 else
-                    loadImageNoteFrame(br.readLine(), br.readLine(), Integer.parseInt(br.readLine()), Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()));
+                    loadImageNoteFrame(br.readLine(), br.readLine(), Integer.parseInt(br.readLine()), Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()),Integer.parseInt(br.readLine()));
             }
 
             } catch (IOException e) {
-			e.printStackTrace();
+                System.out.println("Can't read file.");
             } finally {
                 try 
                 {
@@ -291,9 +304,18 @@ public class Organizator extends JFrame implements ActionListener {
                         fr.close();
 
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    System.out.println("Can't close file.");
                 }
 
             }
+    }
+    
+    public void closeAllNotes()
+    {
+        try
+        {
+            for(JInternalFrame frame : desktop.getAllFrames()) frame.setClosed(true);
+        } catch(java.beans.PropertyVetoException e) {}
+        notes.clear();
     }
 }

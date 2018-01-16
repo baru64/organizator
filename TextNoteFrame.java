@@ -10,9 +10,9 @@ import javax.swing.JLabel;
 public class TextNoteFrame extends NoteFrame {
     private JLabel text;
     private String textstr;
-    public TextNoteFrame(Organizator org, String title, String textstr, int bgcolor, JDesktopPane desktopPane, int x, int y)
+    public TextNoteFrame(Organizator org, String title, String textstr, int bgcolor, JDesktopPane desktopPane, int x, int y, int sizeX, int sizeY)
     {
-        super(org, bgcolor, title,x, y);
+        super(org, bgcolor, title,x, y, sizeX, sizeY);
         type = 1;
         text = new JLabel("<HTML>"+textstr,JLabel.CENTER);
         this.add(text);

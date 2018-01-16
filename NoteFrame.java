@@ -32,7 +32,7 @@ public abstract class NoteFrame extends JInternalFrame implements ActionListener
     protected int id;
     protected Organizator org;
     protected int type;
-    public NoteFrame(Organizator org, int color, String title, int x, int y) {
+    public NoteFrame(Organizator org, int color, String title, int x, int y, int sizeX, int sizeY ) {
         super(title, 
               true, //resizable
               true, //closable
@@ -66,7 +66,7 @@ public abstract class NoteFrame extends JInternalFrame implements ActionListener
             case 3: bgcolor = new Color(116,141,252);
                 break;
         }
-        setSize(300,300);
+        setSize(sizeX,sizeY);
         setBackground(bgcolor);
         this.setBorder(BorderFactory.createLineBorder(new Color(122,65,25), 2));
         //Set the window's location.

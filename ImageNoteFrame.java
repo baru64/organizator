@@ -11,9 +11,9 @@ import javax.swing.JLabel;
  */
 public class ImageNoteFrame extends NoteFrame{
     private String path;
-    public ImageNoteFrame(Organizator org, String title, String path, int bgcolor, JDesktopPane desktop, int x, int y)
+    public ImageNoteFrame(Organizator org, String title, String path, int bgcolor, JDesktopPane desktop, int x, int y, int sizeX, int sizeY)
     {
-        super(org, bgcolor, title, x, y);
+        super(org, bgcolor, title, x, y, sizeX, sizeY);
         type = 0;
         JLabel imglabel;
 

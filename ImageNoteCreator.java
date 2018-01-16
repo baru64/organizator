@@ -83,7 +83,7 @@ public class ImageNoteCreator extends NoteCreator {
     
     public NoteFrame CreateImageNoteFrame()
     {
-        return new ImageNoteFrame(org, titleField.getText(),path,colorCombo.getSelectedIndex(), this.getDesktopPane(),this.getLocation().x,this.getLocation().y);
+        return new ImageNoteFrame(org, titleField.getText(),path,colorCombo.getSelectedIndex(), this.getDesktopPane(),this.getLocation().x,this.getLocation().y,300,300);
     }
     public void setPath(String path)
     {
